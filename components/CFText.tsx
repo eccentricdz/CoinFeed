@@ -1,6 +1,6 @@
 import { prop } from "ramda";
 import { ReactNode } from "react";
-import { StyleProp, StyleSheet, Text, TextComponent, TextStyle } from "react-native";
+import { StyleProp, StyleSheet, Text, TextStyle } from "react-native";
 import Theme from "../modules/theme";
 
 export enum CFTypography {
@@ -30,10 +30,16 @@ const styles: { [key: string]: StyleProp<TextStyle> } = StyleSheet.create({
         fontSize: 30,
         fontWeight: "bold"
     },
+    h4: {
+        fontSize: 14,
+        fontWeight: "bold",
+        color: Theme.color.gray
+    }
 });
 
 const { base } = styles;
 const h1 = StyleSheet.compose(base, styles.h1);
-const textStyles: { [key: string]: StyleProp<TextStyle> } = { base, h1 };
+const h4 = StyleSheet.compose(base, styles.h4);
+const textStyles: { [key: string]: StyleProp<TextStyle> } = { base, h1, h4 };
 
 export default CFText;
