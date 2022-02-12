@@ -1,9 +1,8 @@
 const Theme = {
     color: {
-        background: {
-            dark: "#121212"
-        }
-    }
-}
+        dark: "#121212",
+        base: "#FFF",
+    },
+};
 
 export default Theme;
