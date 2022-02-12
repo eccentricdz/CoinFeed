@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ViewProps } from "react-native";
 import Theme from "../modules/theme";
 
 export enum DividerType {
@@ -6,10 +6,10 @@ export enum DividerType {
     THIN = 2,
 }
 
-const Divider = ({ type }: { type: DividerType }) => {
+const Divider = ({ type, ...props }: { type: DividerType } & Partial<ViewProps>) => {
     return (
         <View
-            style={StyleSheet.flatten([styles.divider, { height: type }])}
+            style={StyleSheet.flatten([styles.divider, { height: type }, props?.style])}
         ></View>
     );
 };

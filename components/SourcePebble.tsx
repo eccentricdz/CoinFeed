@@ -3,11 +3,18 @@ import { useContext, useState } from "react";
 import { Pressable, Image, StyleSheet } from "react-native";
 import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
 import { toSourceImageUrl } from "../modules/utils";
+import Divider, { DividerType } from "./Divider";
 import { Source } from "./SourceBuffet";
+
+const Highlight = ({ isActive }: { isActive: boolean }) =>
+    isActive ? (
+        <Divider type={DividerType.THICK} style={styles.hightlight}></Divider>
+    ) : null;
 
 const SourcePebble = observer(
     ({ item, index }: { item: Source; index: number }) => {
         const coinFeedStore = useContext(CoinFeedStoreContext);
+        const isActive = coinFeedStore.activeSource?._id === item._id;
         return (
             <Pressable
                 style={
@@ -25,6 +32,7 @@ const SourcePebble = observer(
                         height: 64,
                     }}
                 ></Image>
+                <Highlight isActive={isActive}></Highlight>
             </Pressable>
         );
     }
@@ -37,6 +45,9 @@ const styles = StyleSheet.create({
     },
     lastPebble: {
         marginRight: 0,
+    },
+    hightlight: {
+        transform: [{ translateY: 20 }],
     },
 });
 
