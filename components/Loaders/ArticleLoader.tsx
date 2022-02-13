@@ -7,7 +7,7 @@ const ArticleLoader = (props: ViewProps) => (
     speed={2}
     width={350}
     height={700}
-    viewBox="0 0 350 700"
+    viewBox="6 0 350 700"
     backgroundColor="#292929"
     foregroundColor="#646464"
     {...props}

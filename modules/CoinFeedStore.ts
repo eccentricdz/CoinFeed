@@ -40,6 +40,7 @@ export class CoinFeedStore {
     }
 
     updateArticleStore(sourceId: string, articles: ReadonlyArray<CFArticle>) {
+
         const articleStoreInter = mergeWith(
             concat,
             { [sourceId]: articles },

@@ -30,7 +30,10 @@ const SourceHeader = observer(() => {
                         color={Theme.color.gray}
                     />
                 </View>
-                <Divider type={DividerType.THICK}></Divider>
+                <Divider
+                    type={DividerType.THICK}
+                    style={{ backgroundColor: activeSource.colorOne }}
+                ></Divider>
             </Pressable>
         );
     } else return <HeaderLoader style={styles.container}></HeaderLoader>;

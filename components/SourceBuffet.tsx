@@ -17,37 +17,27 @@ export interface Source {
 }
 
 const SourceBuffet = observer(() => {
-    const { sources, areSourcesLoaded } = useContext(CoinFeedStoreContext);
-    if (areSourcesLoaded) {
-        return (
-            <View style={styles.container}>
-                <LinearGradient
-                    style={styles.gradient}
-                    colors={["transparent", Theme.color.dark]}
-                ></LinearGradient>
-                <FlatList
-                    horizontal
-                    data={sources}
-                    renderItem={(prop) => (
-                        <SourcePebble {...prop}></SourcePebble>
-                    )}
-                    keyExtractor={({ _id }) => _id}
-                    style={styles.buffet}
-                    contentContainerStyle={styles.bufferContainer}
-                />
-            </View>
-        );
-    } else {
-        return (
-            <View style={styles.container}>
-                <LinearGradient
-                    style={styles.gradient}
-                    colors={["transparent", Theme.color.dark]}
-                ></LinearGradient>
-                <SourceLoader style={styles.bufferContainer}></SourceLoader>
-            </View>
-        );
-    }
+    const { sources } = useContext(CoinFeedStoreContext);
+    return (
+        <View style={styles.container}>
+            <LinearGradient
+                style={styles.gradient}
+                colors={["transparent", Theme.color.dark]}
+            ></LinearGradient>
+            <FlatList
+                horizontal
+                data={sources}
+                renderItem={(prop) => <SourcePebble {...prop}></SourcePebble>}
+                keyExtractor={({ _id }) => _id}
+                style={styles.buffet}
+                contentContainerStyle={styles.bufferContainer}
+                ListEmptyComponent={() => (
+                    <SourceLoader style={styles.bufferContainer}></SourceLoader>
+                )}
+                initialNumToRender={5}
+            />
+        </View>
+    );
 });
 
 const styles = StyleSheet.create({

@@ -1,3 +1,4 @@
+import { impactAsync, ImpactFeedbackStyle } from "expo-haptics";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { Pressable, Image, StyleSheet, View } from "react-native";
@@ -19,7 +20,7 @@ const SourcePebble = observer(
     ({ item, index }: { item: Source; index: number }) => {
         const coinFeedStore = useContext(CoinFeedStoreContext);
         const isActive = coinFeedStore.activeSource?._id === item._id;
-        
+
         return (
             <Pressable
                 style={
@@ -27,7 +28,10 @@ const SourcePebble = observer(
                         ? StyleSheet.compose(styles.pebbles, styles.lastPebble)
                         : styles.pebbles
                 }
-                onPress={(_) => coinFeedStore.updateActiveSource(item)}
+                onPress={(_) => {
+                    impactAsync(ImpactFeedbackStyle.Light);
+                    coinFeedStore.updateActiveSource(item);
+                }}
             >
                 <Highlight
                     isActive={isActive}

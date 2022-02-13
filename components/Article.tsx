@@ -36,9 +36,6 @@ const CFShare = ({ link }: { link: string }) => {
     );
 };
 
-const ArticleDivider = ({ isLastArticle }: { isLastArticle: boolean }) =>
-    isLastArticle ? null : <Divider type={DividerType.THIN}></Divider>;
-
 const Article = observer(
     ({ item, index }: { item: CFArticle; index: number }) => {
         const { title, link, pubDate } = item;
@@ -58,9 +55,6 @@ const Article = observer(
                         </CFText>
                         <CFShare link={link}></CFShare>
                     </View>
-                    <ArticleDivider
-                        isLastArticle={isLastArticle}
-                    ></ArticleDivider>
                 </View>
             </Pressable>
         );
