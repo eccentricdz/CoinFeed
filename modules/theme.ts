@@ -4,6 +4,10 @@ const Theme = {
         base: "#FFF",
         gray: "rgba(255,255,255,0.3)",
     },
+    spacing: {
+        small: 16,
+        medium: 24
+    }
 };
 
 export default Theme;

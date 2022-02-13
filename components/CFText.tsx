@@ -17,29 +17,39 @@ const CFText = ({
 }: {
     type?: CFTypography;
     children?: ReactNode;
-}) => <Text style={textStyles[type || CFTypography.BASE]} {...props}>{children}</Text>;
+}) => (
+    <Text style={textStyles[type || CFTypography.BASE]} {...props}>
+        {children}
+    </Text>
+);
 
 const styles: { [key: string]: StyleProp<TextStyle> } = StyleSheet.create({
     base: {
         color: Theme.color.base,
         fontFamily: "sans-serif",
         fontSize: 16,
+        lineHeight: 24
     },
     h1: {
         textTransform: "uppercase",
         fontSize: 30,
-        fontWeight: "bold"
+        lineHeight: 30,
+        fontWeight: "bold",
+    },
+    h3: {
+        fontSize: 12,
+        lineHeight: 12,
+        color: Theme.color.gray,
     },
     h4: {
-        fontSize: 14,
-        fontWeight: "bold",
-        color: Theme.color.gray
-    }
+        textTransform: "none",
+    },
 });
 
 const { base } = styles;
 const h1 = StyleSheet.compose(base, styles.h1);
-const h4 = StyleSheet.compose(base, styles.h4);
-const textStyles: { [key: string]: StyleProp<TextStyle> } = { base, h1, h4 };
+const h3 = StyleSheet.compose(h1, styles.h3);
+const h4 = StyleSheet.compose(h3, styles.h4);
+const textStyles: { [key: string]: StyleProp<TextStyle> } = { base, h1, h4, h3 };
 
 export default CFText;

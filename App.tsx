@@ -2,6 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import { observer } from "mobx-react-lite";
 import { createContext, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import CFText from "./components/CFText";
+import SourceArticles from "./components/SourceArticles";
 import SourceBuffet from "./components/SourceBuffet";
 import SourceHeader from "./components/SourceHeader";
 import coinFeedStore, { CoinFeedStoreContext } from "./modules/CoinFeedStore";
@@ -14,8 +16,10 @@ const App = observer(() => {
             const response = await fetch(SOURCES_URL);
             const sources = await response.json();
             coinFeedStore.updateSources(sources);
+            if (!coinFeedStore.activeSource)
+                coinFeedStore.updateActiveSource(sources[0]);
         } catch (error) {
-            console.error(error);
+            console.error(`Error occured while fetching sources: ${error}`);
         }
     };
 
@@ -23,17 +27,16 @@ const App = observer(() => {
         fetchSources();
     }, []);
 
-    if (coinFeedStore.areSourcesLoaded) {
-        return (
-            <CoinFeedStoreContext.Provider value={coinFeedStore}>
-                <View style={styles.container}>
-                    <SourceHeader></SourceHeader>
-                    <SourceBuffet></SourceBuffet>
-                    <StatusBar style="inverted" />
-                </View>
-            </CoinFeedStoreContext.Provider>
-        );
-    } else return <Text>Loading..</Text>
+    return (
+        <CoinFeedStoreContext.Provider value={coinFeedStore}>
+            <View style={styles.container}>
+                <SourceHeader></SourceHeader>
+                <SourceArticles></SourceArticles>
+                <SourceBuffet></SourceBuffet>
+                <StatusBar style="inverted" />
+            </View>
+        </CoinFeedStoreContext.Provider>
+    );
 });
 
 const styles = StyleSheet.create({
