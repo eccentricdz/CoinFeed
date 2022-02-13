@@ -1,20 +1,25 @@
 import { observer } from "mobx-react-lite";
-import { useContext, useState } from "react";
-import { Pressable, Image, StyleSheet } from "react-native";
+import { useContext } from "react";
+import { Pressable, Image, StyleSheet, View } from "react-native";
 import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
 import { toSourceImageUrl } from "../modules/utils";
-import Divider, { DividerType } from "./Divider";
 import { Source } from "./SourceBuffet";
 
-const Highlight = ({ isActive }: { isActive: boolean }) =>
+const Highlight = ({ isActive, color }: { isActive: boolean; color: string }) =>
     isActive ? (
-        <Divider type={DividerType.THICK} style={styles.hightlight}></Divider>
+        <View
+            style={StyleSheet.flatten([
+                styles.hightlight,
+                { backgroundColor: color },
+            ])}
+        ></View>
     ) : null;
 
 const SourcePebble = observer(
     ({ item, index }: { item: Source; index: number }) => {
         const coinFeedStore = useContext(CoinFeedStoreContext);
         const isActive = coinFeedStore.activeSource?._id === item._id;
+        
         return (
             <Pressable
                 style={
@@ -24,6 +29,10 @@ const SourcePebble = observer(
                 }
                 onPress={(_) => coinFeedStore.updateActiveSource(item)}
             >
+                <Highlight
+                    isActive={isActive}
+                    color={item.colorOne}
+                ></Highlight>
                 <Image
                     progressiveRenderingEnabled
                     source={{
@@ -32,7 +41,6 @@ const SourcePebble = observer(
                         height: 64,
                     }}
                 ></Image>
-                <Highlight isActive={isActive}></Highlight>
             </Pressable>
         );
     }
@@ -42,12 +50,18 @@ const styles = StyleSheet.create({
     pebbles: {
         marginRight: 16,
         zIndex: 0.5,
+        alignItems: "center",
     },
     lastPebble: {
         marginRight: 0,
     },
     hightlight: {
-        transform: [{ translateY: 20 }],
+        height: 8,
+        width: 8,
+        borderRadius: 8,
+        position: "absolute",
+        top: -20,
+        left: 28,
     },
 });
 

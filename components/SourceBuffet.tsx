@@ -38,7 +38,15 @@ const SourceBuffet = observer(() => {
             </View>
         );
     } else {
-        return <SourceLoader style={styles.container}></SourceLoader>
+        return (
+            <View style={styles.container}>
+                <LinearGradient
+                    style={styles.gradient}
+                    colors={["transparent", Theme.color.dark]}
+                ></LinearGradient>
+                <SourceLoader style={styles.bufferContainer}></SourceLoader>
+            </View>
+        );
     }
 });
 

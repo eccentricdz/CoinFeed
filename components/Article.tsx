@@ -6,6 +6,7 @@ import Theme from "../modules/theme";
 import Divider, { DividerType } from "./Divider";
 import { useContext } from "react";
 import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
+import { toRelativeTime } from "../modules/utils";
 
 export interface CFArticle {
     title: string;
@@ -22,7 +23,7 @@ const CFShare = ({ link }: { link: string }) => {
             await Share.share({
                 title: "Expo Title",
                 url: link,
-                message: `Check out this article I discovered using CoinFeed: ${link}`
+                message: `Check out this article I discovered using CoinFeed: ${link}`,
             });
         } catch (error) {
             console.error(`Error while sharing from the app: ${error}`);
@@ -50,11 +51,17 @@ const Article = observer(
         return (
             <Pressable onPress={handlePress} style={styles.container}>
                 <CFText>{title}</CFText>
-                <View style={styles.shareRow}>
-                    <CFText type={CFTypography.H3}>{pubDate}</CFText>
-                    <CFShare link={link}></CFShare>
+                <View>
+                    <View style={styles.shareRow}>
+                        <CFText type={CFTypography.H3}>
+                            {toRelativeTime(pubDate)}
+                        </CFText>
+                        <CFShare link={link}></CFShare>
+                    </View>
+                    <ArticleDivider
+                        isLastArticle={isLastArticle}
+                    ></ArticleDivider>
                 </View>
-                <ArticleDivider isLastArticle={isLastArticle}></ArticleDivider>
             </Pressable>
         );
     }
@@ -63,7 +70,9 @@ const Article = observer(
 const styles = StyleSheet.create({
     container: {
         paddingTop: Theme.spacing.medium,
-        minWidth: "100%"
+        minWidth: "100%",
+        minHeight: 125,
+        justifyContent: "space-between",
     },
     shareRow: {
         flexDirection: "row",

@@ -37,11 +37,13 @@ const styles: { [key: string]: StyleProp<TextStyle> } = StyleSheet.create({
         fontWeight: "bold",
     },
     h3: {
-        fontSize: 12,
-        lineHeight: 12,
+        fontSize: 10,
+        lineHeight: 10,
         color: Theme.color.gray,
     },
     h4: {
+        fontSize: 12,
+        lineHeight: 12,
         textTransform: "none",
     },
 });
