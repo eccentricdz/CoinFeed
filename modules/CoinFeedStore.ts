@@ -1,11 +1,12 @@
 import { autorun, makeAutoObservable } from "mobx";
-import { concat, mergeWith } from "ramda";
+import { compose, concat, differenceWith, __ } from "ramda";
 import { createContext } from "react";
 import { CFArticle } from "../components/Article";
 import { Source } from "../components/SourceBuffet";
+import { keyComparator } from "./utils";
 
 export interface ArticleStore {
-    [_id: string]: ReadonlyArray<CFArticle>;
+    [_id: string]: Array<CFArticle>;
 }
 
 export class CoinFeedStore {
@@ -26,13 +27,19 @@ export class CoinFeedStore {
     }
 
     get articleCountForActiveSource(): number {
-        return this.activeSource &&
-            this.articleStore[this.activeSource._id] &&
-            this.articleStore[this.activeSource._id].length || 0;
+        return (
+            (this.activeSource &&
+                this.articleStore[this.activeSource._id] &&
+                this.articleStore[this.activeSource._id].length) ||
+            0
+        );
     }
 
     updateSources(sources: Source[]) {
-        this.sources = sources;
+        this.sources = compose(
+            concat(this.sources),
+            differenceWith(keyComparator<Source, "_id">("_id"), sources)
+        )(this.sources);
     }
 
     updateActiveSource(source: Source) {
@@ -40,24 +47,12 @@ export class CoinFeedStore {
     }
 
     updateArticleStore(sourceId: string, articles: ReadonlyArray<CFArticle>) {
+        const sourceArticles = this.articleStore[sourceId] || [];
 
-        const articleStoreInter = mergeWith(
-            concat,
-            { [sourceId]: articles },
-            this.articleStore
-        );
-
-        /**
-         * Remove the duplicated from the list of articles for a given source.
-         */
-        this.articleStore[sourceId] = [
-            ...new Map<string, CFArticle>(
-                articleStoreInter[sourceId].map((article: CFArticle) => [
-                    article.title,
-                    article,
-                ])
-            ).values(),
-        ];
+        this.articleStore[sourceId] = compose(
+            concat(__, sourceArticles),
+            differenceWith(keyComparator<CFArticle, "link">("link"), articles)
+        )(sourceArticles);
     }
 }
 
@@ -65,13 +60,14 @@ const coinFeedStore = new CoinFeedStore();
 
 autorun(() => {
     console.log(`============================================================`);
-    
+
     console.log(`List of sources: ${JSON.stringify(coinFeedStore.sources)}`);
     console.log(`Sources Loaded: ${coinFeedStore.areSourcesLoaded}`);
     console.log(`Sources Count: ${coinFeedStore.sourcesCount}`);
     console.log(`Active source: ${JSON.stringify(coinFeedStore.activeSource)}`);
-    console.log(`Articles loaded: ${coinFeedStore.articleCountForActiveSource}`);
-    
+    console.log(
+        `Articles loaded: ${coinFeedStore.articleCountForActiveSource}`
+    );
 });
 
 export const CoinFeedStoreContext = createContext(coinFeedStore);

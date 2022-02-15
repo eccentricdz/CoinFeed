@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import { compose, join, append, split, toLower, concat, __ } from "ramda";
+import { CoinFeedStore } from "./CoinFeedStore";
 import {
     ARTICLES_API,
     SERVER_URL,
@@ -29,3 +30,24 @@ export const toRelativeTime = (pubDate: string) =>
         includeSeconds: true,
         addSuffix: true,
     });
+
+export const fetchSources = async (coinFeedStore: CoinFeedStore) => {
+    try {
+        const response = await fetch(SOURCES_URL);
+        const sources = await response.json();
+        coinFeedStore.updateSources(sources);
+        if (!coinFeedStore.activeSource)
+            coinFeedStore.updateActiveSource(sources[0]);
+    } catch (error) {
+        console.error(`Error occured while fetching sources: ${error}`);
+    }
+};
+
+/**
+ * A curried function that returns a comparator for objects of type T.
+ * @param key a valid key in type T
+ * @returns a comparator function that compares the key K
+ */
+export function keyComparator<T, K extends keyof T>(key: K) {
+    return (x: T, y: T) => x[key] === y[key]
+}

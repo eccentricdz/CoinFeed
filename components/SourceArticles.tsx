@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
 import Theme from "../modules/theme";
-import { toArticlesUrl } from "../modules/utils";
+import { fetchSources, toArticlesUrl } from "../modules/utils";
 import Article, { CFArticle } from "./Article";
 import Divider, { DividerType } from "./Divider";
 import ArticleLoader from "./Loaders/ArticleLoader";
@@ -36,7 +36,8 @@ const SourceArticles = observer(() => {
         setRefreshing(true);
         if (sourceId) await fetchArticles(sourceId);
         setRefreshing(false);
-    }
+        await fetchSources(coinFeedStore);
+    };
 
     useEffect(() => {
         if (sourceId && !coinFeedStore.articleCountForActiveSource) {
@@ -59,6 +60,7 @@ const SourceArticles = observer(() => {
             initialNumToRender={5}
             onRefresh={handleRefresh}
             refreshing={refreshing}
+            showsVerticalScrollIndicator={true}
         ></FlatList>
     );
 });
