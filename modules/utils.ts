@@ -20,10 +20,7 @@ export const toSourceImageUrl: (name: string) => string = compose(
 );
 
 export const SOURCES_URL = concat(SERVER_URL, SOURCES_API);
-
-export const toArticlesUrl: (id: string) => string = concat(
-    concat(SERVER_URL, ARTICLES_API)
-);
+export const ARTICLES_URL = concat(SERVER_URL, ARTICLES_API);
 
 export const toRelativeTime = (pubDate: string) =>
     formatDistanceToNow(new Date(pubDate), {
@@ -49,5 +46,5 @@ export const fetchSources = async (coinFeedStore: CoinFeedStore) => {
  * @returns a comparator function that compares the key K
  */
 export function keyComparator<T, K extends keyof T>(key: K) {
-    return (x: T, y: T) => x[key] === y[key]
+    return (x: T, y: T) => x[key] === y[key];
 }

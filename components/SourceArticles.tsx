@@ -3,24 +3,32 @@ import React, { useContext, useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
 import Theme from "../modules/theme";
-import { fetchSources, toArticlesUrl } from "../modules/utils";
+import { ARTICLES_URL, fetchSources } from "../modules/utils";
 import Article, { CFArticle } from "./Article";
 import Divider, { DividerType } from "./Divider";
 import ArticleLoader from "./Loaders/ArticleLoader";
 
 const SourceArticles = observer(() => {
     const coinFeedStore = useContext(CoinFeedStoreContext);
-    const sourceId = coinFeedStore.activeSource?._id;
-    const articles =
-        (sourceId &&
-            coinFeedStore.articleCountForActiveSource &&
-            coinFeedStore.articleStore[sourceId]) ||
-        [];
+    const { activeArticles, activeSource } = coinFeedStore;
+    const sourceId = activeSource?._id;
     const [refreshing, setRefreshing] = useState(false);
 
-    const fetchArticles = async (sourceId: string) => {
+    const fetchArticles = async () => {
         try {
-            const response = await fetch(toArticlesUrl(sourceId));
+            if (!activeSource)
+                throw new Error("No active source to fetch articles for.");
+            const { feedUrl, _id: sourceId } = activeSource;
+            const response = await fetch(ARTICLES_URL, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    feedUrl,
+                }),
+            });
             const articles: ReadonlyArray<CFArticle> = await response.json();
 
             coinFeedStore.updateArticleStore(sourceId, articles);
@@ -34,20 +42,20 @@ const SourceArticles = observer(() => {
 
     const handleRefresh = async () => {
         setRefreshing(true);
-        if (sourceId) await fetchArticles(sourceId);
+        if (sourceId) await fetchArticles();
         setRefreshing(false);
         await fetchSources(coinFeedStore);
     };
 
     useEffect(() => {
         if (sourceId && !coinFeedStore.articleCountForActiveSource) {
-            fetchArticles(sourceId);
+            fetchArticles();
         }
     });
 
     return (
         <FlatList
-            data={articles}
+            data={activeArticles}
             renderItem={(prop) => <Article {...prop}></Article>}
             keyExtractor={({ title }) => title}
             contentContainerStyle={styles.articlesContainer}

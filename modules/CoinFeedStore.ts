@@ -26,13 +26,15 @@ export class CoinFeedStore {
         return this.sources.length;
     }
 
-    get articleCountForActiveSource(): number {
+    get activeArticles(): Array<CFArticle> {
         return (
-            (this.activeSource &&
-                this.articleStore[this.activeSource._id] &&
-                this.articleStore[this.activeSource._id].length) ||
-            0
+            (this.activeSource && this.articleStore[this.activeSource._id]) ||
+            []
         );
+    }
+
+    get articleCountForActiveSource(): number {
+        return (this.activeArticles && this.activeArticles.length) || 0;
     }
 
     updateSources(sources: Source[]) {
