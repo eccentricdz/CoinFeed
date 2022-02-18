@@ -48,3 +48,8 @@ export const fetchSources = async (coinFeedStore: CoinFeedStore) => {
 export function keyComparator<T, K extends keyof T>(key: K) {
     return (x: T, y: T) => x[key] === y[key];
 }
+
+export const peek = <T>(x: T): T => {
+    console.log(`Peeking at value: ${x}`);
+    return x;
+};

@@ -1,4 +1,4 @@
-import { autorun, makeAutoObservable } from "mobx";
+import { autorun, makeAutoObservable, observable } from "mobx";
 import { compose, concat, differenceWith, __ } from "ramda";
 import { createContext } from "react";
 import { CFArticle } from "../components/Article";
@@ -9,10 +9,18 @@ export interface ArticleStore {
     [_id: string]: Array<CFArticle>;
 }
 
+export enum VerticalScrollDirection {
+    UP = "up",
+    DOWN = "down",
+}
+
 export class CoinFeedStore {
     sources: Source[] = [];
     activeSource?: Source = undefined;
     articleStore: ArticleStore = {};
+
+    articleScrollDirection: VerticalScrollDirection =
+        VerticalScrollDirection.DOWN;
 
     constructor() {
         makeAutoObservable(this);
@@ -56,6 +64,10 @@ export class CoinFeedStore {
             differenceWith(keyComparator<CFArticle, "link">("link"), articles)
         )(sourceArticles);
     }
+
+    updateArticleScrollDirection(direction: VerticalScrollDirection) {
+        this.articleScrollDirection = direction;
+    }
 }
 
 const coinFeedStore = new CoinFeedStore();
@@ -69,6 +81,9 @@ autorun(() => {
     console.log(`Active source: ${JSON.stringify(coinFeedStore.activeSource)}`);
     console.log(
         `Articles loaded: ${coinFeedStore.articleCountForActiveSource}`
+    );
+    console.log(
+        `Articles scroll direction: ${coinFeedStore.articleScrollDirection}`
     );
 });
 

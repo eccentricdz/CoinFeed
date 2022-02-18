@@ -1,11 +1,16 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { observer } from "mobx-react-lite";
-import React, { useContext } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
+import React, { useContext, useEffect, useRef } from "react";
+import { StyleSheet, FlatList } from "react-native";
+import { Animated } from "react-native";
+import {
+    CoinFeedStoreContext,
+    VerticalScrollDirection,
+} from "../modules/CoinFeedStore";
 import Theme from "../modules/theme";
 import SourcePebble from "./SourcePebble";
 import SourceLoader from "./Loaders/SourceLoader";
+import { compose } from "ramda";
 
 export interface Source {
     name: string;
@@ -17,9 +22,38 @@ export interface Source {
 }
 
 const SourceBuffet = observer(() => {
-    const { sources } = useContext(CoinFeedStoreContext);
+    const { sources, articleScrollDirection } =
+        useContext(CoinFeedStoreContext);
+    const sourceBufferPos = useRef(new Animated.Value(0)).current;
+
+    const slideUp = () => {
+        Animated.timing(sourceBufferPos, {
+            toValue: 0,
+            duration: 400,
+            useNativeDriver: true,
+        }).start();
+    };
+
+    const slideDown = () => {
+        Animated.timing(sourceBufferPos, {
+            toValue: 162,
+            duration: 400,
+            useNativeDriver: true,
+        }).start();
+    };
+
+    useEffect(() => {
+        if (articleScrollDirection === VerticalScrollDirection.UP) slideDown();
+        else slideUp();
+    }, [articleScrollDirection]);
+
     return (
-        <View style={styles.container}>
+        <Animated.View
+            style={StyleSheet.flatten([
+                styles.container,
+                { transform: [{ translateY: sourceBufferPos }] },
+            ])}
+        >
             <LinearGradient
                 style={styles.gradient}
                 colors={["transparent", Theme.color.dark]}
@@ -36,7 +70,7 @@ const SourceBuffet = observer(() => {
                 )}
                 initialNumToRender={5}
             />
-        </View>
+        </Animated.View>
     );
 });
 

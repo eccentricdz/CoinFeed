@@ -1,15 +1,21 @@
 import { observer } from "mobx-react-lite";
-import React, { useContext, useEffect, useState } from "react";
-import { FlatList, StyleSheet } from "react-native";
-import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
+import { always, compose, gt, ifElse, lensProp, over, set } from "ramda";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { FlatList, NativeScrollPoint, StyleSheet } from "react-native";
+import {
+    CoinFeedStoreContext,
+    VerticalScrollDirection,
+} from "../modules/CoinFeedStore";
 import Theme from "../modules/theme";
-import { ARTICLES_URL, fetchSources } from "../modules/utils";
+import { ARTICLES_URL, fetchSources, peek } from "../modules/utils";
 import Article, { CFArticle } from "./Article";
 import Divider, { DividerType } from "./Divider";
 import ArticleLoader from "./Loaders/ArticleLoader";
 
 const SourceArticles = observer(() => {
     const coinFeedStore = useContext(CoinFeedStoreContext);
+    const contentOffset = useRef<NativeScrollPoint>({ x: 0, y: 0 });
+    let shouldUpdateScrollDir = useRef(false).current;
     const { activeArticles, activeSource } = coinFeedStore;
     const sourceId = activeSource?._id;
     const [refreshing, setRefreshing] = useState(false);
@@ -69,6 +75,32 @@ const SourceArticles = observer(() => {
             onRefresh={handleRefresh}
             refreshing={refreshing}
             showsVerticalScrollIndicator={true}
+            onScroll={({
+                nativeEvent: {
+                    contentOffset: { x, y },
+                },
+            }) => {
+                if (shouldUpdateScrollDir) {
+                    compose(
+                        coinFeedStore.updateArticleScrollDirection.bind(
+                            coinFeedStore
+                        ),
+                        ifElse(
+                            gt(y),
+                            always(VerticalScrollDirection.UP),
+                            always(VerticalScrollDirection.DOWN)
+                        )
+                    )(contentOffset.current.y);
+                }
+                contentOffset.current = { x, y };
+            }}
+            onScrollBeginDrag={() => {
+                shouldUpdateScrollDir = true;
+            }}
+            onScrollEndDrag={() => {
+                shouldUpdateScrollDir = false;
+            }}
+            scrollEventThrottle={10000}
         ></FlatList>
     );
 });
