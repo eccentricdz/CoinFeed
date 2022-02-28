@@ -1,10 +1,11 @@
 import { impactAsync, ImpactFeedbackStyle } from "expo-haptics";
 import { observer } from "mobx-react-lite";
-import { useContext } from "react";
-import { Pressable, Image, StyleSheet, View } from "react-native";
+import React, { useContext } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
 import { toSourceImageUrl } from "../modules/utils";
 import { Source } from "./SourceBuffet";
+import SourceImage from "./SourceImage";
 
 const Highlight = ({ isActive, color }: { isActive: boolean; color: string }) =>
     isActive ? (
@@ -37,14 +38,7 @@ const SourcePebble = observer(
                     isActive={isActive}
                     color={item.colorOne}
                 ></Highlight>
-                <Image
-                    progressiveRenderingEnabled
-                    source={{
-                        uri: toSourceImageUrl(item.name),
-                        width: 64,
-                        height: 64,
-                    }}
-                ></Image>
+                <SourceImage item={item}></SourceImage>
             </Pressable>
         );
     }

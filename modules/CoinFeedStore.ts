@@ -52,6 +52,10 @@ export class CoinFeedStore {
         )(this.sources);
     }
 
+    replaceSources = (sources: Source[]) => {
+        this.sources = sources;
+    }
+
     updateActiveSource(source: Source) {
         this.activeSource = source;
     }

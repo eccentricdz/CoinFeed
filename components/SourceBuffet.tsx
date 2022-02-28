@@ -9,8 +9,7 @@ import {
 } from "../modules/CoinFeedStore";
 import Theme from "../modules/theme";
 import SourcePebble from "./SourcePebble";
-import SourceLoader from "./Loaders/SourceLoader";
-import { compose } from "ramda";
+import SourceLoader from "./loaders/SourceLoader";
 
 export interface Source {
     name: string;

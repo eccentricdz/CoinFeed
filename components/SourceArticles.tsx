@@ -10,7 +10,7 @@ import Theme from "../modules/theme";
 import { ARTICLES_URL, fetchSources, peek } from "../modules/utils";
 import Article, { CFArticle } from "./Article";
 import Divider, { DividerType } from "./Divider";
-import ArticleLoader from "./Loaders/ArticleLoader";
+import ArticleLoader from "./loaders/ArticleLoader";
 
 const SourceArticles = observer(() => {
     const coinFeedStore = useContext(CoinFeedStoreContext);

@@ -6,7 +6,8 @@ const Theme = {
     },
     spacing: {
         small: 16,
-        medium: 24
+        medium: 24,
+        large: 32
     }
 };
 
