@@ -18,7 +18,7 @@ const CFText = ({
     type?: CFTypography;
     children?: ReactNode;
 } & TextProps) => (
-    <Text style={textStyles[type || CFTypography.BASE]} {...props}>
+    <Text {...props} style={StyleSheet.flatten([textStyles[type || CFTypography.BASE], props.style])}>
         {children}
     </Text>
 );

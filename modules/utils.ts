@@ -1,5 +1,22 @@
 import { formatDistanceToNow } from "date-fns";
-import { compose, join, append, split, toLower, concat, __ } from "ramda";
+import {
+    compose,
+    join,
+    append,
+    split,
+    toLower,
+    concat,
+    __,
+    not,
+    ifElse,
+    view,
+    lensProp,
+    always,
+    has,
+    map,
+    assoc,
+} from "ramda";
+import { Source } from "../components/SourceBuffet";
 import { CoinFeedStore } from "./CoinFeedStore";
 import {
     ARTICLES_API,
@@ -32,9 +49,11 @@ export const fetchSources = async (coinFeedStore: CoinFeedStore) => {
     try {
         const response = await fetch(SOURCES_URL);
         const sources = await response.json();
-        coinFeedStore.updateSources(sources);
-        if (!coinFeedStore.activeSource)
-            coinFeedStore.updateActiveSource(sources[0]);
+        compose(
+            coinFeedStore.updateSources.bind(coinFeedStore),
+            map<Source, Source>(assoc("isActive", true))
+        )(sources);
+        coinFeedStore.updateActiveSource();
     } catch (error) {
         console.error(`Error occured while fetching sources: ${error}`);
     }

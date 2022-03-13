@@ -17,12 +17,12 @@ export interface Source {
     website: string;
     colorOne: string;
     colorTwo: string;
+    isActive?: boolean;
     _id: string;
 }
 
 const SourceBuffet = observer(() => {
-    const { sources, articleScrollDirection } =
-        useContext(CoinFeedStoreContext);
+    const coinFeedStore = useContext(CoinFeedStoreContext);
     const sourceBufferPos = useRef(new Animated.Value(0)).current;
 
     const slideUp = () => {
@@ -42,9 +42,10 @@ const SourceBuffet = observer(() => {
     };
 
     useEffect(() => {
-        if (articleScrollDirection === VerticalScrollDirection.UP) slideDown();
+        if (coinFeedStore.articleScrollDirection === VerticalScrollDirection.UP)
+            slideDown();
         else slideUp();
-    }, [articleScrollDirection]);
+    }, [coinFeedStore.articleScrollDirection]);
 
     return (
         <Animated.View
@@ -59,7 +60,7 @@ const SourceBuffet = observer(() => {
             ></LinearGradient>
             <FlatList
                 horizontal
-                data={sources}
+                data={coinFeedStore.activeSources}
                 renderItem={(prop) => <SourcePebble {...prop}></SourcePebble>}
                 keyExtractor={({ _id }) => _id}
                 style={styles.buffet}
@@ -81,6 +82,7 @@ const styles = StyleSheet.create({
         padding: 24,
         backgroundColor: Theme.color.dark,
         margin: 0,
+        minWidth: "100%",
     },
     gradient: {
         height: 50,

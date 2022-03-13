@@ -33,6 +33,7 @@ const Configure = observer<DrawerScreenProps<RootDrawerParamList>>(
                         <Divider type={DividerType.THIN}></Divider>
                     )}
                     contentContainerStyle={styles.list}
+                    showsVerticalScrollIndicator={false}
                 ></DraggableFlatList>
             </View>
         );

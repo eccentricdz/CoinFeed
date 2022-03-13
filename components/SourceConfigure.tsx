@@ -1,20 +1,19 @@
 import { Pressable, View, StyleSheet } from "react-native";
-import {
-    RenderItemParams,
-} from "react-native-draggable-flatlist";
+import { RenderItemParams } from "react-native-draggable-flatlist";
 import Theme from "../modules/theme";
 import CFText from "./CFText";
 import { Source } from "./SourceBuffet";
 import SourceImage from "./SourceImage";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { impactAsync, ImpactFeedbackStyle } from "expo-haptics";
+import React, { useContext } from "react";
+import { observer } from "mobx-react-lite";
+import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
 
-const SourceConfigure = ({
-    item,
-    isActive,
-    drag,
-}: RenderItemParams<Source>) => {
-    return (
+const SourceConfigure = observer(
+    ({ item, isActive, drag }: RenderItemParams<Source>) => {
+        const coinFeedStore = useContext(CoinFeedStoreContext);
+        return (
             <Pressable
                 onLongPress={() => {
                     drag();
@@ -25,7 +24,7 @@ const SourceConfigure = ({
             >
                 <View style={styles.listItemLeft}>
                     <MaterialCommunityIcons
-                        name="drag-vertical"
+                        name="drag-horizontal-variant"
                         size={30}
                         color={Theme.color.gray}
                     />
@@ -37,23 +36,57 @@ const SourceConfigure = ({
                             marginStart: Theme.spacing.medium,
                         }}
                     ></SourceImage>
-                    <CFText>{item.name}</CFText>
+                    <CFText
+                        style={
+                            coinFeedStore.isSourceActive(item)
+                                ? {}
+                                : { color: Theme.color.gray }
+                        }
+                    >
+                        {item.name}
+                    </CFText>
                 </View>
-                <View></View>
+                <Pressable
+                    style={styles.listItemRight}
+                    onPress={() => {
+                        coinFeedStore.toggleSourceActivation(item);
+                        coinFeedStore.updateActiveSource();
+                    }}
+                >
+                    {coinFeedStore.isSourceActive(item) ? (
+                        <MaterialCommunityIcons
+                            name="minus-circle-outline"
+                            size={24}
+                            color={Theme.color.gray}
+                        />
+                    ) : (
+                        <MaterialIcons
+                            name="add-circle-outline"
+                            size={24}
+                            color={Theme.color.base}
+                        />
+                    )}
+                </Pressable>
             </Pressable>
-    );
-};
+        );
+    }
+);
 
 const styles = StyleSheet.create({
     listItem: {
-        width: "100%"
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
     },
     listItemLeft: {
         flexDirection: "row",
         alignItems: "center",
         paddingTop: Theme.spacing.medium,
         paddingBottom: Theme.spacing.medium,
-        justifyContent: "flex-start"
+        justifyContent: "flex-start",
+    },
+    listItemRight: {
+        justifyContent: "center",
     },
 });
 

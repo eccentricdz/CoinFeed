@@ -1,5 +1,16 @@
-import { autorun, makeAutoObservable, observable } from "mobx";
-import { compose, concat, differenceWith, __ } from "ramda";
+import { autorun, makeAutoObservable } from "mobx";
+import {
+    always,
+    compose,
+    concat,
+    differenceWith,
+    ifElse,
+    lensProp,
+    not,
+    view,
+    __,
+    has,
+} from "ramda";
 import { createContext } from "react";
 import { CFArticle } from "../components/Article";
 import { Source } from "../components/SourceBuffet";
@@ -12,6 +23,14 @@ export interface ArticleStore {
 export enum VerticalScrollDirection {
     UP = "up",
     DOWN = "down",
+}
+
+export function isSourceActive(source: Source): boolean {
+    return ifElse(
+        has("isActive"),
+        view(lensProp<Source>("isActive")) as (_: Source) => boolean,
+        always(true)
+    )(source);
 }
 
 export class CoinFeedStore {
@@ -34,6 +53,10 @@ export class CoinFeedStore {
         return this.sources.length;
     }
 
+    get activeSources(): Source[] {
+        return this.sources.filter((source) => source.isActive);
+    }
+
     get activeArticles(): Array<CFArticle> {
         return (
             (this.activeSource && this.articleStore[this.activeSource._id]) ||
@@ -45,6 +68,10 @@ export class CoinFeedStore {
         return (this.activeArticles && this.activeArticles.length) || 0;
     }
 
+    get isSourceActive(): (_: Source) => boolean {
+        return isSourceActive;
+    }
+
     updateSources(sources: Source[]) {
         this.sources = compose(
             concat(this.sources),
@@ -54,10 +81,16 @@ export class CoinFeedStore {
 
     replaceSources = (sources: Source[]) => {
         this.sources = sources;
-    }
+    };
 
-    updateActiveSource(source: Source) {
-        this.activeSource = source;
+    updateActiveSource(source?: Source) {
+        this.activeSource = source
+            ? source
+            : this.activeSource
+            ? isSourceActive(this.activeSource)
+                ? this.activeSource
+                : this.activeSources[0]
+            : this.activeSources[0];
     }
 
     updateArticleStore(sourceId: string, articles: ReadonlyArray<CFArticle>) {
@@ -71,6 +104,10 @@ export class CoinFeedStore {
 
     updateArticleScrollDirection(direction: VerticalScrollDirection) {
         this.articleScrollDirection = direction;
+    }
+
+    toggleSourceActivation(source: Source) {
+        source.isActive = not(isSourceActive(source));
     }
 }
 
