@@ -10,11 +10,12 @@ import {
     view,
     __,
     has,
+    equals,
 } from "ramda";
 import { createContext } from "react";
 import { CFArticle } from "../components/Article";
 import { Source } from "../components/SourceBuffet";
-import { keyComparator } from "./utils";
+import { keyComparator, updateLocalStorage } from "./utils";
 
 export interface ArticleStore {
     [_id: string]: Array<CFArticle>;
@@ -72,15 +73,21 @@ export class CoinFeedStore {
         return isSourceActive;
     }
 
-    updateSources(sources: Source[]) {
+    updateSources(sources: Source[], shouldUpdateLocal: boolean = true) {
+        const oldSources = this.sources;
         this.sources = compose(
             concat(this.sources),
             differenceWith(keyComparator<Source, "_id">("_id"), sources)
         )(this.sources);
+        if (shouldUpdateLocal) this.postSourceUpdate(oldSources);
+        else this.updateActiveSource();
     }
 
     replaceSources = (sources: Source[]) => {
+        const oldSources = this.sources;
         this.sources = sources;
+
+        this.postSourceUpdate(oldSources);
     };
 
     updateActiveSource(source?: Source) {
@@ -108,6 +115,17 @@ export class CoinFeedStore {
 
     toggleSourceActivation(source: Source) {
         source.isActive = not(isSourceActive(source));
+        this.postSourceUpdate();
+    }
+
+    postSourceUpdate(oldSources?: Source[]) {
+        if (
+            !oldSources ||
+            JSON.stringify(oldSources) !== JSON.stringify(this.sources)
+        ) {
+            this.updateActiveSource();
+            updateLocalStorage(this);
+        }
     }
 }
 

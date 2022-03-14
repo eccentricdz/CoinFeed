@@ -7,14 +7,14 @@ import SourceBuffet from "../SourceBuffet";
 import SourceHeader from "../SourceHeader";
 import coinFeedStore, { CoinFeedStoreContext } from "../../modules/CoinFeedStore";
 import Theme from "../../modules/theme";
-import { fetchSources } from "../../modules/utils";
+import { fetchSources, fetchSourcesFromLocalStorage } from "../../modules/utils";
 import AppLoading from "expo-app-loading";
 import type { DrawerScreenProps } from "@react-navigation/drawer";
 import { RootDrawerParamList } from "../../App";
 
 const Home = observer<DrawerScreenProps<RootDrawerParamList>>(({route, navigation}) => {
     useEffect(() => {
-        fetchSources(coinFeedStore);
+        fetchSourcesFromLocalStorage(coinFeedStore).then(_ => fetchSources(coinFeedStore));
     }, []);
 
     if (coinFeedStore.activeSource) {
