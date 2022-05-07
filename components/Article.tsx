@@ -3,7 +3,6 @@ import { Pressable, StyleSheet, View, Share } from "react-native";
 import CFText, { CFTypography } from "./CFText";
 import * as WebBrowser from "expo-web-browser";
 import Theme from "../modules/theme";
-import Divider, { DividerType } from "./Divider";
 import { useContext } from "react";
 import { CoinFeedStoreContext } from "../modules/CoinFeedStore";
 import { toRelativeTime } from "../modules/utils";
@@ -37,13 +36,11 @@ const CFShare = ({ link }: { link: string }) => {
 };
 
 const Article = observer(
-    ({ item, index }: { item: CFArticle; index: number }) => {
+    ({ item }: { item: CFArticle }) => {
         const { title, link, pubDate } = item;
-        const handlePress = () => WebBrowser.openBrowserAsync(link);
-        const { articleCountForActiveSource } =
-            useContext(CoinFeedStoreContext);
-
-        const isLastArticle = index === articleCountForActiveSource - 1;
+        const handlePress = () => {
+            WebBrowser.openBrowserAsync(Array.isArray(link) ? link[0] : link);
+        }
 
         return (
             <Pressable onPress={handlePress} style={styles.container}>

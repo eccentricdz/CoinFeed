@@ -49,8 +49,8 @@ const SourceConfigure = observer(
                 <Pressable
                     style={styles.listItemRight}
                     onPress={() => {
+                        impactAsync(ImpactFeedbackStyle.Light);
                         coinFeedStore.toggleSourceActivation(item);
-                        coinFeedStore.updateActiveSource();
                     }}
                 >
                     {coinFeedStore.isSourceActive(item) ? (

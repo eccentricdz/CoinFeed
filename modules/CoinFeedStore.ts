@@ -11,6 +11,8 @@ import {
     __,
     has,
     equals,
+    filter,
+    map,
 } from "ramda";
 import { createContext } from "react";
 import { CFArticle } from "../components/Article";
@@ -79,6 +81,11 @@ export class CoinFeedStore {
             concat(this.sources),
             differenceWith(keyComparator<Source, "_id">("_id"), sources)
         )(this.sources);
+
+        // Delete the sources not present in the new sources array.
+        const idsToDelete: string[] = compose(map((source: Source) => source._id), differenceWith(keyComparator<Source, "_id">("_id"), this.sources))(sources)
+        this.sources = filter(({ _id }: Source) => !idsToDelete.includes(_id) )(this.sources)
+
         if (shouldUpdateLocal) this.postSourceUpdate(oldSources);
         else this.updateActiveSource();
     }

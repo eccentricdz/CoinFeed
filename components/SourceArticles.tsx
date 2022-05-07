@@ -63,7 +63,7 @@ const SourceArticles = observer(() => {
         <FlatList
             data={activeArticles}
             renderItem={(prop) => <Article {...prop}></Article>}
-            keyExtractor={({ title }) => title}
+            keyExtractor={({ link }) => link}
             contentContainerStyle={styles.articlesContainer}
             ItemSeparatorComponent={() => (
                 <Divider type={DividerType.THIN}></Divider>
