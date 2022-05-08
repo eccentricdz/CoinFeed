@@ -38,9 +38,7 @@ const CFShare = ({ link }: { link: string }) => {
 const Article = observer(
     ({ item }: { item: CFArticle }) => {
         const { title, link, pubDate } = item;
-        const handlePress = () => {
-            WebBrowser.openBrowserAsync(Array.isArray(link) ? link[0] : link);
-        }
+        const handlePress = () => WebBrowser.openBrowserAsync(link);
 
         return (
             <Pressable onPress={handlePress} style={styles.container}>
