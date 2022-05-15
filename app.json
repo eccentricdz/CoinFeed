@@ -2,7 +2,7 @@
   "expo": {
     "name": "CoinFeed",
     "slug": "CoinFeed",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -24,7 +24,8 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.edz.CoinFeed"
+      "package": "com.edz.CoinFeed",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
